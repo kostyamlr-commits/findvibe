@@ -1,8 +1,6 @@
 import Head from 'next/head'
 import Header from '../components/Header'
-import Hero from '../components/Hero'
 import HomeFeed from '../components/HomeFeed'
-import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
 
 export default function Home({ initialProducts, total }) {
@@ -15,10 +13,8 @@ export default function Home({ initialProducts, total }) {
       </Head>
       <Header/>
       <main>
-        <Hero/>
         <HomeFeed initialProducts={initialProducts} total={total}/>
       </main>
-      <Footer/>
     </>
   )
 }
