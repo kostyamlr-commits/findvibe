@@ -30,7 +30,11 @@ export default function ProductCard({ product }) {
           {product.title}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {product.price ? <span style={{ fontSize: 15, fontWeight: 700, color: '#2b2825' }}>${product.price.toFixed(2)}</span> : <span/>}
+          <div style={{ display: 'flex', gap: 1 }}>
+            {[1,2,3,4,5].map(i => (
+              <span key={i} style={{ fontSize: 12, color: i <= Math.round(product.rating||4.5) ? '#b08d57' : '#e0d9cd' }}>★</span>
+            ))}
+          </div>
           <span style={{ fontSize: 11, color: '#a8a096', fontWeight: 500 }}>
             {(product.orders||0) >= 1000 ? `${Math.round(product.orders/1000*10)/10}K sold` : `${product.orders||0} sold`}
           </span>
