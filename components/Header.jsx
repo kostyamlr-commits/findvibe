@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 
-// Minimal floating header: small logo top-left that fades on scroll, and a
-// floating search bar (debounced) that is the ONLY way to filter the feed -
-// no category chips cluttering the screen per Kostya spec.
+// Single fixed top container holding both logo and search, centered,
+// with proper top padding so nothing hugs the screen edge. Fixes the
+// earlier bug where logo and search were two separate fixed elements
+// that could overlap/drift independently.
 export default function Header() {
   const [q, setQ] = useState('')
   const [scrolled, setScrolled] = useState(false)
+  const [focused, setFocused] = useState(false)
   const debounceRef = useRef(null)
 
   useEffect(() => {
@@ -23,33 +25,37 @@ export default function Header() {
   }
 
   return (
-    <>
+    <div style={{
+      position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50,
+      paddingTop: '2rem', paddingLeft: 20, paddingRight: 20,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+      pointerEvents: 'none', // children opt back in individually so empty space doesn't block scroll/taps
+    }}>
       <a href="/" style={{
-        position: 'fixed', top: 18, left: 20, zIndex: 100,
-        fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
+        pointerEvents: 'auto',
+        fontSize: 17, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
         opacity: scrolled ? 0 : 1, transition: 'opacity 0.3s',
-        textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+        textShadow: '0 1px 8px rgba(0,0,0,0.45)',
       }}>
         FindVibe
       </a>
 
-      <div style={{
-        position: 'fixed', top: 16, right: 16, zIndex: 100,
-        width: scrolled ? 240 : 44, transition: 'width 0.3s ease',
-      }}>
-        <input
-          value={q}
-          onChange={e => handleSearchInput(e.target.value)}
-          onFocus={e => e.target.style.width = '240px'}
-          placeholder="Search..."
-          style={{
-            width: '100%', height: 44, padding: '0 16px', borderRadius: 22,
-            border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(0,0,0,0.35)',
-            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-            color: '#fff', fontSize: 13, outline: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif",
-          }}
-        />
-      </div>
-    </>
+      <input
+        value={q}
+        onChange={e => handleSearchInput(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder="Search..."
+        style={{
+          pointerEvents: 'auto',
+          width: focused || q ? 260 : 180, maxWidth: '90vw',
+          height: 42, padding: '0 18px', borderRadius: 21,
+          border: '1px solid rgba(255,255,255,0.28)', background: 'rgba(0,0,0,0.32)',
+          backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+          color: '#fff', fontSize: 13, outline: 'none', textAlign: 'center',
+          fontFamily: "'Plus Jakarta Sans',sans-serif", transition: 'width 0.25s ease',
+        }}
+      />
+    </div>
   )
 }
