@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
-import { CAT_LABELS, CATEGORY_LIST } from '../lib/aliexpress'
 
+// Minimal floating header: small logo top-left that fades on scroll, and a
+// floating search bar (debounced) that is the ONLY way to filter the feed -
+// no category chips cluttering the screen per Kostya spec.
 export default function Header() {
   const [q, setQ] = useState('')
   const [scrolled, setScrolled] = useState(false)
-  const [catsOpen, setCatsOpen] = useState(false)
   const debounceRef = useRef(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80)
+    const onScroll = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -23,55 +24,31 @@ export default function Header() {
 
   return (
     <>
-      {/* Logo bar - fades out on scroll */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 90, background: '#faf8f5',
-        borderBottom: '1px solid #e8e2d9', padding: '16px 20px',
-        opacity: scrolled ? 0 : 1, maxHeight: scrolled ? 0 : 80,
-        overflow: 'hidden', transition: 'opacity 0.3s, max-height 0.3s, padding 0.3s',
-        ...(scrolled ? { padding: '0 20px' } : {}),
+      <a href="/" style={{
+        position: 'fixed', top: 18, left: 20, zIndex: 100,
+        fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
+        opacity: scrolled ? 0 : 1, transition: 'opacity 0.3s',
+        textShadow: '0 1px 6px rgba(0,0,0,0.4)',
       }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <a href="/" style={{ fontSize: 22, fontWeight: 800, color: '#2b2825', letterSpacing: '-0.02em' }}>
-            FindVibe
-          </a>
-          <span style={{ fontSize: 12, color: '#a8a096', fontWeight: 500, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-            Affordable Aesthetic Finds
-          </span>
-        </div>
-      </div>
+        FindVibe
+      </a>
 
-      {/* Floating search bar - always visible */}
-      <div style={{ position: 'sticky', top: scrolled ? 0 : 0, zIndex: 95, padding: '12px 20px', background: 'rgba(250,248,245,0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: '1px solid #e8e2d9' }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ flex: 1, position: 'relative' }}>
-            <input
-              value={q}
-              onChange={e => handleSearchInput(e.target.value)}
-              placeholder="Search aesthetic finds..."
-              style={{
-                width: '100%', height: 44, padding: '0 18px', borderRadius: 22,
-                border: '1px solid #e0d9cd', background: '#fff', color: '#2b2825',
-                fontSize: 14, outline: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif",
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-              }}
-            />
-          </div>
-          <button onClick={() => setCatsOpen(o => !o)}
-            style={{ height: 44, padding: '0 18px', borderRadius: 22, border: '1px solid #e0d9cd', background: '#fff', color: '#5a544a', fontWeight: 600, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-            Categories
-          </button>
-        </div>
-        {catsOpen && (
-          <div style={{ maxWidth: 760, margin: '14px auto 0', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {CATEGORY_LIST.map(c => (
-              <a key={c.id} href={`/?cat=${c.id}`}
-                style={{ padding: '6px 14px', borderRadius: 14, fontSize: 12.5, fontWeight: 600, color: '#5a544a', background: '#fff', border: '1px solid #e8e2d9' }}>
-                {CAT_LABELS[c.id]}
-              </a>
-            ))}
-          </div>
-        )}
+      <div style={{
+        position: 'fixed', top: 16, right: 16, zIndex: 100,
+        width: scrolled ? 240 : 44, transition: 'width 0.3s ease',
+      }}>
+        <input
+          value={q}
+          onChange={e => handleSearchInput(e.target.value)}
+          onFocus={e => e.target.style.width = '240px'}
+          placeholder="Search..."
+          style={{
+            width: '100%', height: 44, padding: '0 16px', borderRadius: 22,
+            border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(0,0,0,0.35)',
+            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+            color: '#fff', fontSize: 13, outline: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif",
+          }}
+        />
       </div>
     </>
   )
