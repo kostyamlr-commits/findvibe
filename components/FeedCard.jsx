@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-// Full-screen single-product card for the TikTok-style vertical feed.
+// Full-screen single-product card. No technical title, no star rating -
+// just a short elegant name and a subtle "Shop the look" action, on a
+// gentle scrim that doesn't cover the image.
 export default function FeedCard({ product }) {
   const [imgErr, setImgErr] = useState(false)
 
@@ -19,33 +21,32 @@ export default function FeedCard({ product }) {
         }
       </a>
 
-      {/* Gradient scrim so overlay text stays legible on any image */}
+      {/* Very subtle scrim, just enough for legibility, doesn't mask the image */}
       <div style={{
-        position: 'absolute', left: 0, right: 0, bottom: 0, height: '40%',
-        background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent)',
+        position: 'absolute', left: 0, right: 0, bottom: 0, height: '22%',
+        background: 'linear-gradient(to top, rgba(0,0,0,0.45), transparent)',
         pointerEvents: 'none',
       }} />
 
-      {/* Translucent glass title overlay */}
       <div style={{
-        position: 'absolute', left: 20, right: 20, bottom: 28,
-        padding: '16px 20px', borderRadius: 18,
-        background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-        border: '1px solid rgba(255,255,255,0.18)',
+        position: 'absolute', left: 24, right: 24, bottom: 32,
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16,
       }}>
-        <p style={{ margin: 0, color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4 }}>
+        <p style={{
+          margin: 0, color: '#fff', fontSize: 17, fontWeight: 500, letterSpacing: '0.01em',
+          textShadow: '0 1px 8px rgba(0,0,0,0.5)',
+        }}>
           {product.title}
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
-          <div style={{ display: 'flex', gap: 1 }}>
-            {[1,2,3,4,5].map(i => (
-              <span key={i} style={{ fontSize: 12, color: i <= Math.round(product.rating||4.5) ? '#e8c97a' : 'rgba(255,255,255,0.25)' }}>★</span>
-            ))}
-          </div>
-          <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
-            {(product.orders||0) >= 1000 ? `${Math.round(product.orders/1000*10)/10}K sold` : `${product.orders||0} sold`}
-          </span>
-        </div>
+        <a href={product.affiliate_url} target="_blank" rel="noopener noreferrer sponsored"
+          style={{
+            flexShrink: 0, padding: '9px 16px', borderRadius: 18,
+            background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.3)', color: '#fff', fontSize: 12.5, fontWeight: 600,
+            whiteSpace: 'nowrap',
+          }}>
+          Shop the look
+        </a>
       </div>
     </article>
   )
